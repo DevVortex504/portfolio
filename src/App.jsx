@@ -822,7 +822,7 @@ export default function App() {
   ];
 
   return (
-    <div className={`min-h-screen font-mono selection:bg-cyan-500 selection:text-black transition-colors duration-0 ${colors.bg} ${colors.text} overflow-x-hidden cursor-none`}>
+    <div className={`min-h-screen font-mono selection:bg-cyan-500 selection:text-black transition-colors duration-500 ${colors.bg} ${colors.text} overflow-x-hidden cursor-none`}>
       <TechBackground theme={theme} />
       <EmailVerificationModal 
         isOpen={showEmailModal} 
@@ -867,17 +867,22 @@ export default function App() {
             <div className={`h-full border-l border-r ${colors.border} flex items-center px-6`}>
               <button 
                 onClick={toggleTheme}
-                className="hover:scale-110 transition-transform"
+                className="hover:scale-110 transition-all duration-300 relative overflow-hidden"
               >
-                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                <Sun className={`w-4 h-4 absolute transition-all duration-500 ${theme === 'dark' ? 'rotate-0 opacity-100 scale-100' : 'rotate-180 opacity-0 scale-0'}`} />
+                <Moon className={`w-4 h-4 transition-all duration-500 ${theme === 'light' ? 'rotate-0 opacity-100 scale-100' : '-rotate-180 opacity-0 scale-0'}`} />
               </button>
             </div>
           </nav>
 
           {/* Mobile Menu Toggle */}
           <div className="md:hidden flex items-center gap-4">
-             <button onClick={toggleTheme}>
-                {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+             <button 
+               onClick={toggleTheme}
+               className="relative overflow-hidden transition-all duration-300 hover:scale-110"
+             >
+                <Sun className={`w-4 h-4 absolute transition-all duration-500 ${theme === 'dark' ? 'rotate-0 opacity-100 scale-100' : 'rotate-180 opacity-0 scale-0'}`} />
+                <Moon className={`w-4 h-4 transition-all duration-500 ${theme === 'light' ? 'rotate-0 opacity-100 scale-100' : '-rotate-180 opacity-0 scale-0'}`} />
              </button>
              <button 
                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
