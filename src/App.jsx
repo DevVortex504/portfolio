@@ -379,7 +379,7 @@ const TerminalContact = ({ theme, colors }) => {
       />
       <div className="max-w-4xl mx-auto">
         <div className={`text-sm font-bold mb-8 ${colors.accent}`}>
-          // 04. CONTACT
+          // 03. CONTACT
         </div>
         
         {/* Mac Terminal Window */}
@@ -773,7 +773,10 @@ export default function App() {
         {/* PROJECTS SECTION */}
         <section id="projects" className="py-24">
           <div className="flex items-end justify-between mb-12 border-b-4 border-zinc-800 pb-4">
-            <h2 className="text-5xl md:text-7xl font-black uppercase">Projects</h2>
+            <h2 className="text-5xl md:text-7xl font-black uppercase">
+              <span className="text-sm md:text-base font-bold mr-4">// 02.</span>
+              Projects
+            </h2>
             <span className="hidden md:block text-xl font-mono">Index: 01-05</span>
           </div>
 
@@ -781,10 +784,10 @@ export default function App() {
              {projects.map((project, idx) => (
                <div 
                  key={project.id} 
-                 className={`group relative p-8 border ${colors.border} border-t-0 -ml-[1px] -mt-[1px] hover:z-10 transition-all duration-0 bg-transparent hover:${colors.cardBg}`}
+                 className={`group relative p-8 border ${colors.border} border-t-0 -ml-[1px] -mt-[1px] hover:z-10 transition-all duration-300 bg-transparent hover:${colors.cardBg} hover:scale-105 origin-center`}
                >
                  {/* Hover Background Fill */}
-                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 ${colors.hover} transition-opacity duration-0 pointer-events-none`}></div>
+                 <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 ${colors.hover} transition-opacity duration-300 pointer-events-none`}></div>
                  
                  <div className="relative z-10">
                    <div className="flex justify-between items-start mb-6">
