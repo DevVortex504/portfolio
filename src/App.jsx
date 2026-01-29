@@ -262,7 +262,7 @@ const TerminalContact = ({ theme, colors }) => {
             {showButtons && (
               <div className="space-y-3">
                 <a 
-                  href="mailto:contact@trishit.ee" 
+                  href="mailto:debsharmatrishit@gmail.com" 
                   className={`flex items-center gap-3 p-4 border ${colors.border} ${colors.hover} transition-colors group`}
                 >
                   <Mail className="w-5 h-5" />
@@ -270,7 +270,7 @@ const TerminalContact = ({ theme, colors }) => {
                 </a>
                 
                 <a 
-                  href="https://github.com/yourusername" 
+                  href="https://github.com/DevVortex504" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`flex items-center gap-3 p-4 border ${colors.border} ${colors.hover} transition-colors group`}
@@ -280,7 +280,7 @@ const TerminalContact = ({ theme, colors }) => {
                 </a>
                 
                 <a 
-                  href="https://linkedin.com/in/yourusername" 
+                  href="https://www.linkedin.com/in/trishit-debsharma" 
                   target="_blank"
                   rel="noopener noreferrer"
                   className={`flex items-center gap-3 p-4 border ${colors.border} ${colors.hover} transition-colors group`}
@@ -290,7 +290,7 @@ const TerminalContact = ({ theme, colors }) => {
                 </a>
                 
                 <button 
-                  onClick={() => navigator.clipboard.writeText('contact@trishit.ee')}
+                  onClick={() => navigator.clipboard.writeText('debsharmatrishit@gmail.com')}
                   className={`w-full flex items-center gap-3 p-4 border ${colors.border} ${colors.hover} transition-colors group`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -545,11 +545,15 @@ export default function App() {
               </div>
 
               <div className="mt-16 flex flex-wrap gap-4">
-                 {['Github', 'LinkedIn', 'Resume'].map((item) => (
-                   <a key={item} href="#" className={`group flex items-center gap-2 text-sm border ${colors.border} px-6 py-3 hover:bg-zinc-800 hover:text-white transition-colors uppercase font-bold tracking-wider`}>
-                     {item} <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
-                   </a>
-                 ))}
+                 <a href="https://github.com/DevVortex504" target="_blank" rel="noopener noreferrer" className={`group flex items-center gap-2 text-sm border ${colors.border} px-6 py-3 hover:bg-zinc-800 hover:text-white transition-colors uppercase font-bold tracking-wider`}>
+                   Github <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                 </a>
+                 <a href="https://www.linkedin.com/in/trishit-debsharma" target="_blank" rel="noopener noreferrer" className={`group flex items-center gap-2 text-sm border ${colors.border} px-6 py-3 hover:bg-zinc-800 hover:text-white transition-colors uppercase font-bold tracking-wider`}>
+                   LinkedIn <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                 </a>
+                 <a href="mailto:debsharmatrishit@gmail.com" className={`group flex items-center gap-2 text-sm border ${colors.border} px-6 py-3 hover:bg-zinc-800 hover:text-white transition-colors uppercase font-bold tracking-wider`}>
+                   Email <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                 </a>
               </div>
             </div>
         </section>
