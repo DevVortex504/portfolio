@@ -312,6 +312,7 @@ const TerminalContact = ({ theme, colors }) => {
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null); // Track what action triggered verification
 
   // Obfuscated email - Base64 encoded to hide from scrapers
   const getEmail = () => {
@@ -330,6 +331,7 @@ const TerminalContact = ({ theme, colors }) => {
   const handleEmailClick = (e) => {
     if (!isVerified) {
       e.preventDefault();
+      setPendingAction('email');
       setShowEmailModal(true);
     }
   };
@@ -346,12 +348,24 @@ const TerminalContact = ({ theme, colors }) => {
       setCopied(true);
       setTimeout(() => setCopied(false), 3000);
     } else {
+      setPendingAction('copy');
       setShowEmailModal(true);
     }
   };
 
   const handleModalVerified = () => {
     setIsVerified(true);
+    
+    // Execute the pending action after verification
+    if (pendingAction === 'copy') {
+      navigator.clipboard.writeText(getEmail());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    } else if (pendingAction === 'email') {
+      window.location.href = `mailto:${getEmail()}`;
+    }
+    
+    setPendingAction(null);
   };
 
   return (
