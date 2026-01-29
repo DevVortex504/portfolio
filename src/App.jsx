@@ -464,8 +464,8 @@ export default function App() {
           {/* Brand */}
           <div className="flex items-center gap-2 text-sm font-bold tracking-widest cursor-pointer" onClick={() => scrollToSection('hero')}>
             <Zap className={`w-4 h-4 ${colors.accent}`} />
-            <span className="hidden md:inline">SYS.ONLINE</span>
-            <span className="md:hidden">TD.EXE</span>
+            <span className="hidden md:inline">TDS</span>
+            <span className="md:hidden">TDS.EXE</span>
           </div>
 
           {/* Desktop Nav */}
@@ -521,9 +521,9 @@ export default function App() {
         {/* HERO SECTION */}
         <section id="hero" className="min-h-[85vh] flex flex-col justify-center relative border-b-2 border-dashed border-zinc-700/30">
             <div className={`absolute top-24 right-0 text-xs text-right font-bold ${colors.dim} hidden md:block`}>
-              ID: ENG-8821<br/>
-              LOC: LAB_01<br/>
-              UPTIME: 99.9%
+              ID: EE-27<br/>
+              LOC: JU-EE<br/>
+              {/* UPTIME: 99.9% */}
             </div>
             
             <div className="max-w-5xl">
