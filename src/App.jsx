@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Terminal, Cpu, Zap, Activity, Battery, Crosshair, Sun, Moon, ArrowUpRight, Github, Linkedin, Mail, Menu, X } from 'lucide-react';
+import { Terminal, Cpu, Zap, Activity, Battery, Crosshair, Sun, Moon, ArrowUpRight, Github, Linkedin, Mail, Menu, X, ExternalLink } from 'lucide-react';
 
 /**
  * UTILITY: Random character generator for the decoding effect
@@ -300,6 +300,142 @@ const EmailVerificationModal = ({ isOpen, onClose, onVerified, theme, colors }) 
 };
 
 /**
+ * COMPONENT: Project Detail Modal
+ * Shows detailed information about a project
+ */
+const ProjectModal = ({ project, isOpen, onClose, theme, colors }) => {
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [isOpen]);
+
+  if (!isOpen || !project) return null;
+
+  return (
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 cursor-auto">
+      {/* Backdrop */}
+      <div 
+        className="absolute inset-0 bg-black/80 backdrop-blur-sm cursor-auto"
+        onClick={onClose}
+      />
+      
+      {/* Modal */}
+      <div className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto border-4 ${colors.border} ${colors.bg} p-8 shadow-2xl cursor-auto`}>
+        {/* Close Button */}
+        <button
+          onClick={onClose}
+          className={`absolute top-4 right-4 p-2 ${colors.hover} transition-colors cursor-pointer`}
+        >
+          <X className="w-6 h-6" />
+        </button>
+
+        {/* Header */}
+        <div className="mb-8">
+          <div className={`flex items-center gap-4 mb-4`}>
+            <div className={`${colors.accent}`}>{project.icon}</div>
+            <span className={`text-xs font-bold border px-3 py-1 ${colors.border}`}>PRJ-{project.id}00</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-black uppercase mb-4">{project.title}</h2>
+          <p className={`text-lg ${colors.dim}`}>{project.desc}</p>
+        </div>
+
+        {/* Project Image */}
+        {project.image && (
+          <div className="mb-8 border-4 border-zinc-700 overflow-hidden">
+            <img 
+              src={project.image} 
+              alt={project.title}
+              className="w-full h-auto"
+            />
+          </div>
+        )}
+
+        {/* Tech Stack */}
+        <div className="mb-8">
+          <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2">
+            <span className={`${colors.accent}`}>&gt;&gt;</span> Tech Stack
+          </h3>
+          <div className="flex flex-wrap gap-2">
+            {project.stack.map(tech => (
+              <span key={tech} className={`text-xs font-bold uppercase tracking-wider border ${colors.border} px-3 py-2`}>
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Detailed Description */}
+        {project.details && (
+          <div className="mb-8">
+            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2">
+              <span className={`${colors.accent}`}>&gt;&gt;</span> Overview
+            </h3>
+            <div className={`text-sm leading-relaxed space-y-4 ${colors.dim}`}>
+              {project.details.split('\n').map((paragraph, idx) => (
+                <p key={idx}>{paragraph}</p>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Key Features */}
+        {project.features && (
+          <div className="mb-8">
+            <h3 className="text-xl font-bold uppercase mb-4 flex items-center gap-2">
+              <span className={`${colors.accent}`}>&gt;&gt;</span> Key Features
+            </h3>
+            <ul className="space-y-2">
+              {project.features.map((feature, idx) => (
+                <li key={idx} className={`flex items-start gap-3 text-sm ${colors.dim}`}>
+                  <span className={`${colors.accent} mt-1`}>▸</span>
+                  <span>{feature}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+        {/* Links */}
+        {(project.github || project.demo) && (
+          <div className="flex flex-wrap gap-4">
+            {project.github && (
+              <a
+                href={project.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-2 px-6 py-3 border ${colors.border} ${colors.hover} transition-colors font-bold uppercase text-sm`}
+              >
+                <Github className="w-5 h-5" />
+                View Code
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
+            {project.demo && (
+              <a
+                href={project.demo}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`flex items-center gap-2 px-6 py-3 border ${colors.border} ${colors.hover} transition-colors font-bold uppercase text-sm`}
+              >
+                <ArrowUpRight className="w-5 h-5" />
+                Live Demo
+                <ExternalLink className="w-4 h-4" />
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+/**
  * COMPONENT: Terminal Contact Section
  * Shows terminal with sequential output animations
  */
@@ -533,6 +669,8 @@ export default function App() {
   const [mounted, setMounted] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [showProjectModal, setShowProjectModal] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
@@ -596,35 +734,90 @@ export default function App() {
       desc: "Dual-drone fleet coordination using custom Pixhawk firmware. Implements SLAM for crop mapping and localized spraying.",
       stack: ["C++", "Python", "LIDAR", "Jetson Nano", "Pixhawk"],
       icon: <Crosshair className="w-6 h-6" />,
-      image: "/portfolio/images/hexa.jpg"
+      image: "/portfolio/images/hexa.jpg",
+      details: "Developed a coordinated dual-drone system for precision agriculture, featuring custom firmware modifications to Pixhawk flight controllers. The system implements real-time SLAM (Simultaneous Localization and Mapping) using LIDAR sensors for accurate crop mapping and enables targeted pesticide spraying with minimal environmental impact.\n\nThe project integrates computer vision algorithms running on Jetson Nano edge computing devices for real-time crop health analysis. Custom communication protocols ensure reliable coordination between drones, preventing coverage overlap and optimizing flight paths for maximum efficiency.",
+      features: [
+        "Custom Pixhawk firmware with extended telemetry and control APIs",
+        "Real-time SLAM implementation using LIDAR point cloud processing",
+        "Computer vision-based crop health monitoring with anomaly detection",
+        "Multi-drone coordination with collision avoidance algorithms",
+        "Precision spraying system with variable flow control",
+        "Ground station software for mission planning and monitoring"
+      ],
+      github: null,
+      demo: null
     },
     {
       id: 2,
       title: "Mars Yard Autonomous Rover",
       desc: "6-wheel rover featuring ROS-based navigation stack, rough terrain traversal, and object manipulation.",
       stack: ["ROS", "RealSense D435", "Ubuntu", "Python", "MoveIt"],
-      icon: <Cpu className="w-6 h-6" />
+      icon: <Cpu className="w-6 h-6" />,
+      details: "Designed and built a 6-wheel rocker-bogie rover inspired by NASA's Mars rovers, capable of autonomous navigation in challenging terrain. The robot runs a full ROS navigation stack with custom path planning algorithms optimized for rough terrain traversal.\n\nEquipped with Intel RealSense D435 depth camera for 3D environment mapping and obstacle detection. The rover features a 4-DOF manipulator arm controlled via MoveIt for object manipulation tasks, making it suitable for sample collection scenarios.",
+      features: [
+        "Rocker-bogie suspension system for maximum ground contact and stability",
+        "Custom path planning considering terrain difficulty and rover limitations",
+        "Real-time 3D mapping and localization using RealSense depth camera",
+        "4-DOF manipulator with inverse kinematics control via MoveIt",
+        "Autonomous navigation with dynamic obstacle avoidance",
+        "Power management system with solar charging capability"
+      ],
+      github: null,
+      demo: null
     },
     {
       id: 3,
       title: "Drone PID Position Control",
       desc: "Simulation environment for testing aggressive flight maneuvers using cascaded PID loops.",
       stack: ["ROS 2", "Gazebo", "PX4", "Matlab", "Control Theory"],
-      icon: <Activity className="w-6 h-6" />
+      icon: <Activity className="w-6 h-6" />,
+      details: "Built a comprehensive simulation framework for developing and testing aggressive drone flight controllers. The system implements cascaded PID control loops for position, velocity, and attitude control, enabling precise trajectory tracking even during high-speed maneuvers.\n\nUsing PX4 autopilot stack within Gazebo simulation environment, the project includes Matlab/Simulink models for controller tuning and validation. The framework supports Hardware-in-the-Loop (HITL) testing, allowing direct deployment of tuned controllers to physical drones.",
+      features: [
+        "Cascaded PID architecture with position, velocity, and attitude loops",
+        "Gazebo physics simulation with realistic aerodynamics modeling",
+        "Matlab/Simulink integration for controller design and analysis",
+        "Hardware-in-the-Loop (HITL) testing capability",
+        "Trajectory generation for aggressive maneuvers (flips, barrel rolls)",
+        "Real-time performance metrics and visualization tools"
+      ],
+      github: null,
+      demo: null
     },
     {
       id: 4,
       title: "Stroke Detection XAI",
       desc: "Explainable AI architecture combining CNNs with a meta-learner to identify stroke precursors in CT scans.",
       stack: ["PyTorch", "TensorFlow", "Scikit-Learn", "OpenCV"],
-      icon: <Terminal className="w-6 h-6" />
+      icon: <Terminal className="w-6 h-6" />,
+      details: "Developed an explainable AI system for early stroke detection from CT scan images. The architecture combines convolutional neural networks (CNNs) for feature extraction with a meta-learning framework that provides interpretable predictions and highlights critical regions in medical images.\n\nThe system achieves high accuracy while maintaining transparency through attention mechanisms and saliency mapping, allowing medical professionals to understand and verify the AI's reasoning process. Trained on a large dataset of annotated CT scans with validation from medical experts.",
+      features: [
+        "CNN-based feature extraction with attention mechanisms",
+        "Meta-learner architecture for improved generalization",
+        "Grad-CAM visualization for explaining model predictions",
+        "Multi-class classification (ischemic, hemorrhagic, normal)",
+        "Real-time inference capability for clinical deployment",
+        "Comprehensive evaluation metrics with medical expert validation"
+      ],
+      github: null,
+      demo: null
     },
     {
       id: 5,
       title: "Embedded Systems Suite",
       desc: "Collection of hardware builds including custom BMS, IMU sensor fusion modules, and motor controllers.",
       stack: ["STM32", "Altium", "C", "I2C/SPI", "FreeRTOS"],
-      icon: <Battery className="w-6 h-6" />
+      icon: <Battery className="w-6 h-6" />,
+      details: "A collection of custom-designed embedded systems for robotics applications. Projects include a Battery Management System (BMS) with cell balancing and safety features, IMU sensor fusion module for attitude estimation, and high-power motor controllers for autonomous vehicles.\n\nAll systems feature custom PCB designs created in Altium Designer, with firmware written in C running on STM32 microcontrollers. Communication protocols include I2C, SPI, and CAN bus for integration into larger robotic systems.",
+      features: [
+        "Custom BMS with active cell balancing and fault protection",
+        "9-axis IMU with Kalman filter-based sensor fusion",
+        "Dual-channel motor controller supporting up to 60A continuous",
+        "FreeRTOS-based firmware with real-time guarantees",
+        "CANbus and UART interfaces for system integration",
+        "Over-the-air (OTA) firmware update capability"
+      ],
+      github: null,
+      demo: null
     }
   ];
 
@@ -635,6 +828,16 @@ export default function App() {
         isOpen={showEmailModal} 
         onClose={() => setShowEmailModal(false)} 
         onVerified={handleEmailVerified}
+        theme={theme}
+        colors={colors}
+      />
+      <ProjectModal 
+        project={selectedProject}
+        isOpen={showProjectModal}
+        onClose={() => {
+          setShowProjectModal(false);
+          setSelectedProject(null);
+        }}
         theme={theme}
         colors={colors}
       />
@@ -785,7 +988,11 @@ export default function App() {
              {projects.map((project, idx) => (
                <div 
                  key={project.id} 
-                 className={`group relative p-8 border ${colors.border} border-t-0 -ml-[1px] -mt-[1px] hover:z-10 transition-all duration-300 bg-transparent hover:${colors.cardBg} hover:scale-105 origin-center`}
+                 onClick={() => {
+                   setSelectedProject(project);
+                   setShowProjectModal(true);
+                 }}
+                 className={`group relative p-8 border ${colors.border} border-t-0 -ml-[1px] -mt-[1px] hover:z-10 transition-all duration-300 bg-transparent hover:${colors.cardBg} hover:scale-105 origin-center cursor-pointer`}
                >
                  {/* Hover Background Fill */}
                  <div className={`absolute inset-0 opacity-0 group-hover:opacity-100 ${colors.hover} transition-opacity duration-300 pointer-events-none`}></div>
