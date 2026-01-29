@@ -850,7 +850,7 @@ export default function App() {
           <div className="flex items-center gap-2 text-sm font-bold tracking-widest cursor-pointer" onClick={() => scrollToSection('hero')}>
             <Zap className={`w-4 h-4 ${colors.accent}`} />
             <span className="hidden md:inline">TDS</span>
-            <span className="md:hidden">TDS.EXE</span>
+            <span className="md:hidden">TDS</span>
           </div>
 
           {/* Desktop Nav */}
@@ -879,26 +879,34 @@ export default function App() {
              <button onClick={toggleTheme}>
                 {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
              </button>
-             <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}>
-                {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+             <button 
+               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+               className="relative w-6 h-6 flex items-center justify-center"
+               aria-label="Toggle menu"
+             >
+                {/* Animated Hamburger/Cross */}
+                <div className="w-6 h-5 flex flex-col justify-between">
+                  <span className={`block h-0.5 w-full ${colors.text} bg-current transform transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : 'rotate-0 translate-y-0'}`}></span>
+                  <span className={`block h-0.5 w-full ${colors.text} bg-current transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'opacity-0' : 'opacity-100'}`}></span>
+                  <span className={`block h-0.5 w-full ${colors.text} bg-current transform transition-all duration-300 ease-in-out ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : 'rotate-0 translate-y-0'}`}></span>
+                </div>
              </button>
           </div>
         </div>
 
         {/* Mobile Nav Dropdown */}
-        {isMobileMenuOpen && (
-          <nav className={`md:hidden border-t ${colors.border} absolute w-full ${colors.bg}`}>
-             {navLinks.map((link) => (
-              <button 
-                key={link.id}
-                onClick={() => scrollToSection(link.id)}
-                className={`w-full text-left py-4 px-6 border-b ${colors.border} text-xs font-bold tracking-widest ${colors.hoverText}`}
-              >
-                {link.label}
-              </button>
-            ))}
-          </nav>
-        )}
+        <nav className={`md:hidden border-t ${colors.border} absolute w-full ${colors.bg} overflow-hidden transition-all duration-300 ease-in-out ${isMobileMenuOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+           {navLinks.map((link, index) => (
+            <button 
+              key={link.id}
+              onClick={() => scrollToSection(link.id)}
+              className={`w-full text-left py-4 px-6 border-b ${colors.border} text-xs font-bold tracking-widest ${colors.hoverText} transform transition-all duration-300 ease-out ${isMobileMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}`}
+              style={{ transitionDelay: isMobileMenuOpen ? `${index * 50}ms` : '0ms' }}
+            >
+              {link.label}
+            </button>
+          ))}
+        </nav>
       </header>
 
       <main className="relative z-10 pt-20 px-6 md:px-12 max-w-7xl mx-auto">
