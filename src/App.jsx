@@ -311,6 +311,7 @@ const TerminalContact = ({ theme, colors }) => {
   const [showButtons, setShowButtons] = useState(false);
   const [showEmailModal, setShowEmailModal] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   // Obfuscated email - Base64 encoded to hide from scrapers
   const getEmail = () => {
@@ -342,6 +343,8 @@ const TerminalContact = ({ theme, colors }) => {
   const handleCopyEmail = () => {
     if (isVerified) {
       navigator.clipboard.writeText(getEmail());
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
     } else {
       setShowEmailModal(true);
     }
@@ -430,13 +433,13 @@ const TerminalContact = ({ theme, colors }) => {
                 
                 <button 
                   onClick={handleCopyEmail}
-                  className={`w-full flex items-center gap-3 p-4 border ${colors.border} ${colors.hover} transition-colors group`}
+                  className={`w-full flex items-center gap-3 p-4 border ${colors.border} ${copied ? 'bg-green-500/20 border-green-500' : colors.hover} transition-colors group relative`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
-                  <span className="font-bold">COPY_EMAIL</span>
-                  {!isVerified && <span className="ml-auto text-xs opacity-50">[VERIFY]</span>}
+                  <span className="font-bold">{copied ? '✓ EMAIL_COPIED' : 'COPY_EMAIL'}</span>
+                  {!isVerified && !copied && <span className="ml-auto text-xs opacity-50">[VERIFY]</span>}
                 </button>
               </div>
             )}
