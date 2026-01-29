@@ -397,7 +397,7 @@ const TerminalContact = ({ theme, colors }) => {
           {/* Terminal Content */}
           <div className="p-6 font-mono text-sm">
             <div className={`mb-4 ${colors.dim}`}>
-              Last login: {new Date().toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })} from 192.168.1.1
+              Last login: {new Date().toLocaleString('en-US', { month: 'numeric', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric', hour12: true })}
             </div>
             <div className="text-blue-500 mb-4">
               Welcome to Trishit Debsharma's Portfolio System
@@ -595,7 +595,8 @@ export default function App() {
       title: "Autonomous Precision Ag. System",
       desc: "Dual-drone fleet coordination using custom Pixhawk firmware. Implements SLAM for crop mapping and localized spraying.",
       stack: ["C++", "Python", "LIDAR", "Jetson Nano", "Pixhawk"],
-      icon: <Crosshair className="w-6 h-6" />
+      icon: <Crosshair className="w-6 h-6" />,
+      image: "/portfolio/images/hexa.jpg"
     },
     {
       id: 2,
@@ -796,10 +797,18 @@ export default function App() {
                    </div>
                    
                    <div className="aspect-video bg-zinc-800 mb-6 overflow-hidden grayscale group-hover:grayscale-0 transition-all border border-zinc-700 relative">
-                      {/* Project Image Placeholder */}
-                      <div className="absolute inset-0 flex items-center justify-center text-zinc-600 text-xs font-mono uppercase">
-                        IMG_NO_SIGNAL
-                      </div>
+                      {/* Project Image */}
+                      {project.image ? (
+                        <img 
+                          src={project.image} 
+                          alt={project.title}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-zinc-600 text-xs font-mono uppercase">
+                          IMG_NO_SIGNAL
+                        </div>
+                      )}
                       {/* Scanline effect */}
                       <div className="absolute inset-0 bg-[linear-gradient(transparent_50%,rgba(0,0,0,0.5)_50%)] bg-[length:100%_4px] opacity-20"></div>
                    </div>
