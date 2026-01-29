@@ -322,10 +322,10 @@ const TerminalContact = ({ theme, colors }) => {
 
   const handleTypingComplete = () => {
     setTypingComplete(true);
-    setTimeout(() => setShowLine1(true), 300);
-    setTimeout(() => setShowLine2(true), 600);
-    setTimeout(() => setShowLine3(true), 900);
-    setTimeout(() => setShowButtons(true), 1200);
+    setTimeout(() => setShowLine1(true), 200);
+    setTimeout(() => setShowLine2(true), 100);
+    setTimeout(() => setShowLine3(true), 110);
+    setTimeout(() => setShowButtons(true), 120);
   };
 
   const handleEmailClick = (e) => {
@@ -405,7 +405,7 @@ const TerminalContact = ({ theme, colors }) => {
             
             <div className="mb-6">
               <span className="text-blue-500">root@trishit:~$</span>{' '}
-              <TerminalTyping text="./contact.sh --initiate" delay={80} onComplete={handleTypingComplete} />
+              <TerminalTyping text="./contact.sh --initiate" delay={40} onComplete={handleTypingComplete} />
             </div>
             
             {showLine1 && <div className={`mb-2 ${colors.dim}`}>&gt; Initializing communication link...</div>}
@@ -714,8 +714,8 @@ export default function App() {
               </div>
 
               <h1 className="text-5xl md:text-7xl lg:text-9xl font-black tracking-tighter leading-[0.9] mb-8 uppercase">
-                <DecryptText text="TRISHIT" speed={100} className={colors.accent} /><br/>
-                <DecryptText text="DEBSHARMA" speed={80} />
+                <DecryptText text="TRISHIT" speed={30} className={colors.accent} /><br/>
+                <DecryptText text="DEBSHARMA" speed={50} />
               </h1>
               
               <div className="flex flex-col md:flex-row items-start md:items-center gap-6 mt-8">
