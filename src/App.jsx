@@ -203,6 +203,103 @@ const TerminalTyping = ({ text, delay = 50, onComplete }) => {
 };
 
 /**
+ * COMPONENT: Advanced Email Verification Modal
+ * Shows hCaptcha image verification before revealing email
+ */
+const EmailVerificationModal = ({ isOpen, onClose, onVerified, theme, colors }) => {
+  const [isVerifying, setIsVerifying] = useState(false);
+  const [error, setError] = useState(false);
+  const captchaRef = useRef(null);
+
+  useEffect(() => {
+    if (isOpen && window.hcaptcha) {
+      // Reset captcha when modal opens
+      setError(false);
+      setIsVerifying(false);
+      
+      // Small delay to ensure modal is rendered
+      setTimeout(() => {
+        if (captchaRef.current && !captchaRef.current.hasChildNodes()) {
+          window.hcaptcha.render(captchaRef.current, {
+            sitekey: 'a40e02e6-aa38-4c06-b7c8-1f2648da4748', // hCaptcha test key - replace with your real key
+            theme: theme === 'dark' ? 'dark' : 'light',
+            callback: (token) => {
+              setIsVerifying(true);
+              // Verify successful
+              setTimeout(() => {
+                onVerified();
+                onClose();
+              }, 500);
+            },
+            'error-callback': () => {
+              setError(true);
+            },
+            'expired-callback': () => {
+              setError(true);
+            }
+          });
+        }
+      }, 100);
+    }
+  }, [isOpen, theme, onVerified, onClose]);
+
+  const handleClose = () => {
+    if (captchaRef.current) {
+      try {
+        window.hcaptcha.reset(captchaRef.current);
+      } catch (e) {
+        // Ignore reset errors
+      }
+    }
+    onClose();
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 cursor-auto" onClick={handleClose}>
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-sm"></div>
+      <div 
+        className={`relative ${colors.cardBg} border-2 ${colors.border} rounded-lg p-8 max-w-md w-full shadow-2xl cursor-auto`}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-bold uppercase">Verify You're Human</h3>
+          <button onClick={handleClose} className={`${colors.dim} hover:${colors.text} cursor-pointer`}>
+            <X className="w-6 h-6" />
+          </button>
+        </div>
+        
+        <div className="mb-6">
+          <p className={`text-sm mb-4 font-mono ${colors.dim}`}>
+            Complete the challenge below to access contact information
+          </p>
+          
+          {/* hCaptcha container */}
+          <div ref={captchaRef} className="flex justify-center"></div>
+          
+          {isVerifying && (
+            <div className="mt-4 p-3 bg-green-500/10 border border-green-500 rounded text-center">
+              <p className="text-green-500 text-sm font-bold">✓ Verification successful!</p>
+            </div>
+          )}
+          
+          {error && (
+            <div className="mt-4 p-3 bg-red-500/10 border border-red-500 rounded">
+              <p className="text-red-500 text-sm font-bold">❌ Verification failed. Please try again.</p>
+            </div>
+          )}
+        </div>
+        
+        <p className={`text-xs text-center ${colors.dim}`}>
+          Protected by hCaptcha • Anti-bot verification
+        </p>
+      </div>
+    </div>
+  );
+};
+
+/**
  * COMPONENT: Terminal Contact Section
  * Shows terminal with sequential output animations
  */
@@ -212,6 +309,14 @@ const TerminalContact = ({ theme, colors }) => {
   const [showLine2, setShowLine2] = useState(false);
   const [showLine3, setShowLine3] = useState(false);
   const [showButtons, setShowButtons] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+
+  // Obfuscated email - Base64 encoded to hide from scrapers
+  const getEmail = () => {
+    // This decodes to: debsharmatrishit@gmail.com
+    return atob('ZGVic2hhcm1hdHJpc2hpdEBnbWFpbC5jb20=');
+  };
 
   const handleTypingComplete = () => {
     setTypingComplete(true);
@@ -221,8 +326,40 @@ const TerminalContact = ({ theme, colors }) => {
     setTimeout(() => setShowButtons(true), 1200);
   };
 
+  const handleEmailClick = (e) => {
+    if (!isVerified) {
+      e.preventDefault();
+      setShowEmailModal(true);
+    }
+  };
+
+  const handleVerified = () => {
+    setIsVerified(true);
+    // Open mailto link after verification
+    window.location.href = `mailto:${getEmail()}`;
+  };
+
+  const handleCopyEmail = () => {
+    if (isVerified) {
+      navigator.clipboard.writeText(getEmail());
+    } else {
+      setShowEmailModal(true);
+    }
+  };
+
+  const handleModalVerified = () => {
+    setIsVerified(true);
+  };
+
   return (
     <footer id="contact" className="py-24 mt-20">
+      <EmailVerificationModal 
+        isOpen={showEmailModal} 
+        onClose={() => setShowEmailModal(false)} 
+        onVerified={handleModalVerified}
+        theme={theme}
+        colors={colors}
+      />
       <div className="max-w-4xl mx-auto">
         <div className={`text-sm font-bold mb-8 ${colors.accent}`}>
           // 04. CONTACT
@@ -262,11 +399,13 @@ const TerminalContact = ({ theme, colors }) => {
             {showButtons && (
               <div className="space-y-3">
                 <a 
-                  href="mailto:debsharmatrishit@gmail.com" 
-                  className={`flex items-center gap-3 p-4 border ${colors.border} ${colors.hover} transition-colors group`}
+                  href="#contact" 
+                  onClick={handleEmailClick}
+                  className={`flex items-center gap-3 p-4 border ${colors.border} ${colors.hover} transition-colors group cursor-pointer`}
                 >
                   <Mail className="w-5 h-5" />
                   <span className="font-bold">SEND_EMAIL</span>
+                  {!isVerified && <span className="ml-auto text-xs opacity-50">[VERIFY]</span>}
                 </a>
                 
                 <a 
@@ -290,13 +429,14 @@ const TerminalContact = ({ theme, colors }) => {
                 </a>
                 
                 <button 
-                  onClick={() => navigator.clipboard.writeText('debsharmatrishit@gmail.com')}
+                  onClick={handleCopyEmail}
                   className={`w-full flex items-center gap-3 p-4 border ${colors.border} ${colors.hover} transition-colors group`}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
                   </svg>
                   <span className="font-bold">COPY_EMAIL</span>
+                  {!isVerified && <span className="ml-auto text-xs opacity-50">[VERIFY]</span>}
                 </button>
               </div>
             )}
@@ -374,10 +514,15 @@ export default function App() {
   const [theme, setTheme] = useState('dark');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+
+  // Obfuscated email getter
+  const getEmail = () => atob('ZGVic2hhcm1hdHJpc2hpdEBnbWFpbC5jb20=');
 
   const scrollToSection = (id) => {
     const el = document.getElementById(id);
@@ -385,6 +530,18 @@ export default function App() {
       el.scrollIntoView({ behavior: 'smooth' });
       setIsMobileMenuOpen(false);
     }
+  };
+
+  const handleHeroEmailClick = (e) => {
+    if (!isEmailVerified) {
+      e.preventDefault();
+      setShowEmailModal(true);
+    }
+  };
+
+  const handleEmailVerified = () => {
+    setIsEmailVerified(true);
+    window.location.href = `mailto:${getEmail()}`;
   };
 
   // Colors based on theme
@@ -456,6 +613,13 @@ export default function App() {
   return (
     <div className={`min-h-screen font-mono selection:bg-cyan-500 selection:text-black transition-colors duration-0 ${colors.bg} ${colors.text} overflow-x-hidden cursor-none`}>
       <TechBackground theme={theme} />
+      <EmailVerificationModal 
+        isOpen={showEmailModal} 
+        onClose={() => setShowEmailModal(false)} 
+        onVerified={handleEmailVerified}
+        theme={theme}
+        colors={colors}
+      />
       
       {/* HEADER / NAV */}
       <header className={`fixed top-0 left-0 w-full z-50 border-b ${colors.border} backdrop-blur-md bg-opacity-90 ${theme === 'dark' ? 'bg-zinc-950/80' : 'bg-zinc-50/80'}`}>
@@ -551,7 +715,7 @@ export default function App() {
                  <a href="https://www.linkedin.com/in/trishit-debsharma" target="_blank" rel="noopener noreferrer" className={`group flex items-center gap-2 text-sm border ${colors.border} px-6 py-3 hover:bg-zinc-800 hover:text-white transition-colors uppercase font-bold tracking-wider`}>
                    LinkedIn <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                  </a>
-                 <a href="mailto:debsharmatrishit@gmail.com" className={`group flex items-center gap-2 text-sm border ${colors.border} px-6 py-3 hover:bg-zinc-800 hover:text-white transition-colors uppercase font-bold tracking-wider`}>
+                 <a href="#contact" onClick={handleHeroEmailClick} className={`group flex items-center gap-2 text-sm border ${colors.border} px-6 py-3 hover:bg-zinc-800 hover:text-white transition-colors uppercase font-bold tracking-wider`}>
                    Email <ArrowUpRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                  </a>
               </div>
