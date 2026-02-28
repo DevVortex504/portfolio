@@ -734,7 +734,7 @@ export default function App() {
       desc: "Dual-drone fleet coordination using custom Pixhawk firmware. Implements SLAM for crop mapping and localized spraying.",
       stack: ["C++", "Python", "LIDAR", "Jetson Nano", "Pixhawk"],
       icon: <Crosshair className="w-6 h-6" />,
-      image: "/portfolio/images/hexa.jpg",
+      image: `${import.meta.env.BASE_URL}images/hexa.jpg`,
       details: "Developed a coordinated dual-drone system for precision agriculture, featuring custom firmware modifications to Pixhawk flight controllers. The system implements real-time SLAM (Simultaneous Localization and Mapping) using LIDAR sensors for accurate crop mapping and enables targeted pesticide spraying with minimal environmental impact.\n\nThe project integrates computer vision algorithms running on Jetson Nano edge computing devices for real-time crop health analysis. Custom communication protocols ensure reliable coordination between drones, preventing coverage overlap and optimizing flight paths for maximum efficiency.",
       features: [
         "Custom Pixhawk firmware with extended telemetry and control APIs",
@@ -771,6 +771,7 @@ export default function App() {
       desc: "Simulation environment for testing aggressive flight maneuvers using cascaded PID loops.",
       stack: ["ROS 2", "Gazebo", "PX4", "Matlab", "Control Theory"],
       icon: <Activity className="w-6 h-6" />,
+      image: `${import.meta.env.BASE_URL}images/drone.jpeg`,
       details: "Built a comprehensive simulation framework for developing and testing aggressive drone flight controllers. The system implements cascaded PID control loops for position, velocity, and attitude control, enabling precise trajectory tracking even during high-speed maneuvers.\n\nUsing PX4 autopilot stack within Gazebo simulation environment, the project includes Matlab/Simulink models for controller tuning and validation. The framework supports Hardware-in-the-Loop (HITL) testing, allowing direct deployment of tuned controllers to physical drones.",
       features: [
         "Cascaded PID architecture with position, velocity, and attitude loops",
